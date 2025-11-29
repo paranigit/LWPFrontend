@@ -19,6 +19,7 @@
     "@mui/x-data-grid": "^8.18.0",
     "@mui/x-date-pickers": "^8.18.0",
     "@react-oauth/google": "^0.12.2",
+    "aws-amplify": "^6.15.8",
     "axios": "^1.13.2",
     "date-fns": "^4.1.0",
     "react": "^19.2.0",
@@ -29,17 +30,23 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
+    "@aws-amplify/backend": "^1.18.0",
+    "@aws-amplify/backend-cli": "^1.8.0",
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.0",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@types/recharts": "^1.8.29",
     "@vitejs/plugin-react": "^5.1.0",
+    "aws-cdk-lib": "^2.216.0",
+    "constructs": "^10.4.3",
+    "esbuild": "^0.27.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
-    "typescript": "~5.9.3",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.3",
     "vite": "^7.2.2"
   }
