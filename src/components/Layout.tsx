@@ -86,6 +86,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   // All users can see Recommendations and Watchlists
   menuItems.push({ text: 'Stocks', icon: <AccountTree />, path: '/list-stocks' });
+  menuItems.push({ text: 'ETFs', icon: <PieChart />, path: '/list-etfs' });
   menuItems.push({ text: 'Recommendations', icon: <Lightbulb />, path: '/recommendations' });
 
   // Viewer and Admin can see Dashboard

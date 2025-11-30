@@ -21,6 +21,7 @@ import Strategies from './pages/Admin/Strategies';
 import ListStocks from './pages/ListStocks';
 import HoldingAccounts from './pages/Holdings/HoldingAccounts';
 import Scheduler from './pages/Admin/Schedular';
+import ListEtfs from './pages/ListEtfs';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
@@ -119,6 +120,16 @@ const App: React.FC = () => {
                   <ProtectedRoute>
                     <Layout>
                       <ListStocks />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/list-etfs"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <ListEtfs />
                     </Layout>
                   </ProtectedRoute>
                 }

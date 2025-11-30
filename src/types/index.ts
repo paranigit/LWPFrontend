@@ -106,8 +106,26 @@ export interface ETFSymbol {
     currency: CurrencyCode;
     exchange?: string;
     industry_id?: number;
+    sector_industry?: string;
     is_active: boolean;
     created_at: string;
+
+    // Price History
+    price_last_updated?: string;
+
+    // Market Snapshot
+    price_last_close?: number;
+    price_52w_low?: number;
+    price_52w_high?: number;
+
+    // Moving Average
+    price_ma_20d?: number;
+    price_ma_200d?: number;
+
+    // ETF-specific metrics
+    expense_ratio?: number;
+    tracking_error?: number;
+    liquidity?: number;
 }
 
 export interface ETFSymbolCreate {

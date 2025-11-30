@@ -126,8 +126,8 @@ export const stockAPI = {
 
 // ETF API  
 export const etfAPI = {
-    getAll: (): Promise<AxiosResponse<ETFSymbol[]>> =>
-        api.get<ETFSymbol[]>('/api/etfs'),
+    getAll: (purpose?: 'list' | 'admin'): Promise<AxiosResponse<ETFSymbol[]>> =>
+        api.get<ETFSymbol[]>('/api/etfs', { params: { purpose } }),
 
     create: (data: ETFSymbolCreate): Promise<AxiosResponse<ETFSymbol>> =>
         api.post<ETFSymbol>('/api/etfs', data),
