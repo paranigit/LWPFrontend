@@ -20,6 +20,7 @@ import AuditLogs from './pages/Admin/AuditLogs';
 import Strategies from './pages/Admin/Strategies';
 import ListStocks from './pages/ListStocks';
 import HoldingAccounts from './pages/Holdings/HoldingAccounts';
+import Scheduler from './pages/Admin/Schedular';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
@@ -253,16 +254,16 @@ const App: React.FC = () => {
                   </AdminRoute>
                 }
               />
-              {/* <Route
-                path="/admin/maintenance"
+              <Route
+                path="/admin/scheduler"
                 element={
                   <AdminRoute>
                     <Layout>
-                      <Maintenance />
+                      <Scheduler />
                     </Layout>
                   </AdminRoute>
                 }
-              /> */}
+              />
               <Route
                 path="/admin/audit-logs"
                 element={

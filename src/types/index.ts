@@ -298,64 +298,6 @@ export interface GoogleAuthRequest {
     token: string;
 }
 
-// Watchlist types
-export interface WatchlistItem {
-    id: number;
-    watchlist_name: string;
-    stock_symbol?: string;
-    etf_symbol?: string;
-    symbol?: string;
-    name?: string;
-    asset_type?: string;
-    price_current?: number;
-    price_52w_low?: number;
-    price_52w_high?: number;
-    eps?: number;
-    pe_ratio?: number;
-    peg_index?: number
-    pegy_index?: number;
-    dividend_yield?: number;
-    earnings_growth?: number;
-    rsi_index?: number;
-    promoter_integrity?: number;
-    moving_average_20?: number;
-    moving_average_200?: number;
-    currency?: CurrencyCode;
-    notes?: string;
-    added_at: string;
-}
-
-export interface WatchlistItemCreate {
-    stock_symbol?: string;
-    etf_symbol?: string;
-    notes?: string;
-}
-
-export interface Watchlist {
-    name: string;
-    description?: string;
-    created_by: number;
-    creator_name?: string;
-    is_active: boolean;
-    created_at: string;
-    updated_at: string;
-    items_count: number;
-}
-
-export interface WatchlistWithItems extends Watchlist {
-    items: WatchlistItem[];
-}
-
-export interface WatchlistCreate {
-    name: string;
-    description?: string;
-}
-
-export interface WatchlistUpdate {
-    name?: string;
-    description?: string;
-}
-
 // Industry types
 export interface Industry {
     id: number;

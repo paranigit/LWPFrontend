@@ -11,6 +11,8 @@ import {
   Chip,
   Tooltip,
   LinearProgress,
+  Checkbox,
+  ListItemText,
 } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { stockAPI } from '../api/client';
@@ -115,7 +117,7 @@ const ListStocks: React.FC = () => {
   const [stocks, setStocks] = useState<StockSymbol[]>([]);
   const [filteredStocks, setFilteredStocks] = useState<StockSymbol[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedIndustry, setSelectedIndustry] = useState<string>('all');
+  const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
   const [industries, setIndustries] = useState<string[]>([]);
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
 
@@ -136,15 +138,17 @@ const ListStocks: React.FC = () => {
   }, [stocks]);
 
   useEffect(() => {
-    // Filter stocks based on selected industry
-    if (selectedIndustry === 'all') {
+    // Filter stocks based on selected industries
+    if (selectedIndustries.length === 0) {
       setFilteredStocks(stocks);
     } else {
       setFilteredStocks(
-        stocks.filter((stock) => stock.sector_industry === selectedIndustry)
+        stocks.filter((stock) => 
+          stock.sector_industry && selectedIndustries.includes(stock.sector_industry)
+        )
       );
     }
-  }, [selectedIndustry, stocks]);
+  }, [selectedIndustries, stocks]);
 
   const loadStocks = async (): Promise<void> => {
     setLoading(true);
@@ -162,7 +166,13 @@ const ListStocks: React.FC = () => {
   };
 
   const handleIndustryChange = (event: any) => {
-    setSelectedIndustry(event.target.value);
+    const value = event.target.value;
+    // Handle "all" selection
+    if (value.includes('all')) {
+      setSelectedIndustries([]);
+    } else {
+      setSelectedIndustries(value);
+    }
   };
 
   // Define DataGrid columns
@@ -559,26 +569,53 @@ const ListStocks: React.FC = () => {
           <FormControl sx={{ minWidth: 300 }}>
             <InputLabel>Filter by Industry</InputLabel>
             <Select
-              value={selectedIndustry}
+              multiple
+              value={selectedIndustries}
               label="Filter by Industry"
               onChange={handleIndustryChange}
+              renderValue={(selected) => (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {selected.length === 0 ? (
+                    <em>All Industries</em>
+                  ) : (
+                    `${selected.length} selected`
+                  )}
+                </Box>
+              )}
             >
               <MenuItem value="all">
-                <em>All Industries</em>
+                <Checkbox checked={selectedIndustries.length === 0} />
+                <ListItemText primary={<em>All Industries</em>} />
               </MenuItem>
               {industries.map((industry) => (
                 <MenuItem key={industry} value={industry}>
-                  {industry}
+                  <Checkbox checked={selectedIndustries.includes(industry)} />
+                  <ListItemText primary={industry} />
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
           
-          {selectedIndustry !== 'all' && (
+          {/* Display individual chips for each selected industry */}
+          {selectedIndustries.map((industry) => (
             <Chip
-              label={selectedIndustry}
-              onDelete={() => setSelectedIndustry('all')}
+              key={industry}
+              label={industry}
+              onDelete={() => {
+                setSelectedIndustries(selectedIndustries.filter(i => i !== industry));
+              }}
               color="primary"
+              variant="outlined"
+            />
+          ))}
+          
+          {/* Clear all button when multiple industries selected */}
+          {selectedIndustries.length > 1 && (
+            <Chip
+              label="Clear all"
+              onDelete={() => setSelectedIndustries([])}
+              onClick={() => setSelectedIndustries([])}
+              color="secondary"
             />
           )}
         </Box>

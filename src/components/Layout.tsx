@@ -111,7 +111,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { text: 'Bonds', icon: <AccountBalance />, path: '/admin/bonds' },
     { text: 'Mutual Funds', icon: <Business />, path: '/admin/mutual-funds' },
     { text: 'Strategies', icon: <AccountTree />, path: '/admin/strategies' },
-    // { text: 'Maintenance', icon: <Build />, path: '/admin/maintenance' },
+    { text: 'Scheduler', icon: <Settings />, path: '/admin/scheduler' },
     { text: 'Audit Logs', icon: <Assessment />, path: '/admin/audit-logs' },
   ];
 

@@ -85,20 +85,23 @@ export const adminAPI = {
         api.delete(`/api/admin/allowed-emails/${email}`),
 
     triggerDailyPrices: (): Promise<AxiosResponse<{
+        success: boolean;
         message: string;
-        stats: any;
+        info: string;
     }>> =>
         api.post('/api/admin/trigger-daily-prices'),
 
     triggerMarketSnapshots: (): Promise<AxiosResponse<{
+        success: boolean;
         message: string;
-        stats: any;
+        info: string;
     }>> =>
         api.post('/api/admin/trigger-market-snapshots'),
 
     triggerRecommendations: (): Promise<AxiosResponse<{
+        success: boolean;
         message: string;
-        stats: any;
+        info: string;
     }>> =>
         api.post('/api/admin/trigger-recommendations'),
 };
