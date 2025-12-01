@@ -85,7 +85,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const menuItems = [];
 
   // All users can see Recommendations and Watchlists
-  menuItems.push({ text: 'Stocks', icon: <AccountTree />, path: '/list-stocks' });
+  menuItems.push({ text: 'Stocks', icon: <TrendingUp />, path: '/list-stocks' });
   menuItems.push({ text: 'ETFs', icon: <PieChart />, path: '/list-etfs' });
   menuItems.push({ text: 'Recommendations', icon: <Lightbulb />, path: '/recommendations' });
 
@@ -96,7 +96,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   // Holdings submenu items (for Viewer and Admin)
   const holdingsMenuItems = [
-    { text: 'Holding Accounts', icon: <AccountBalance />, path: '/holding/accounts' },
+    { text: 'Holding Accounts', icon: <AccountBalance />, path: '/holding-accounts' },
+    // { text: 'List Holdings', icon: <AccountBalance />, path: '/holding/list-holdings' },
     // { text: 'Stocks', icon: <ShowChart />, path: '/holding/stocks' },
     // { text: 'ETFs', icon: <PieChart />, path: '/holding/etfs' },
     // { text: 'Bonds', icon: <AccountBalance />, path: '/holding/bonds' },

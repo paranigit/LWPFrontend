@@ -216,7 +216,7 @@ export interface HoldingUpdate {
 export interface HoldingWithDetails extends Holding {
     symbol?: string;
     name?: string;
-    current_price?: number;
+    last_close_price?: number;
     total_value?: number;
     profit_loss?: number;
     profit_loss_percentage?: number;
@@ -389,4 +389,86 @@ export interface HoldingAccountUpdate {
     account_platform?: AccountPlatform;
     currency?: CurrencyCode;
     is_active?: boolean;
+}
+
+// Holding Upload types
+export interface HoldingUploadResult {
+    total_rows: number;
+    successful: number;
+    failed: number;
+    errors: string[];
+    created_securities: string[];
+    updated_holdings: string[];
+}
+
+export interface HoldingUploadResponse {
+    message: string;
+    result: HoldingUploadResult;
+}
+
+// Account Holdings types
+export interface HoldingDetail {
+    id: number;
+    quantity: number;
+    average_price: number;
+    currency: string;
+    invested_value: number;
+    last_close_price?: number | null;
+    current_value: number;
+    profit_loss: number;
+    profit_loss_percentage: number;
+    notes?: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface StockHoldingDetail extends HoldingDetail {
+    symbol: string;
+    name?: string;
+    exchange?: string;
+}
+
+export interface ETFHoldingDetail extends HoldingDetail {
+    symbol: string;
+    name?: string;
+    exchange?: string;
+}
+
+export interface BondHoldingDetail extends HoldingDetail {
+    isin: string;
+    name: string;
+    face_value?: number;
+    coupon_rate?: number;
+    maturity_date?: string;
+}
+
+export interface MutualFundHoldingDetail extends HoldingDetail {
+    isin: string;
+    name: string;
+    fund_house?: string;
+}
+
+export interface AccountHoldingsSummary {
+    total_invested: number;
+    total_current_value: number;
+    total_profit_loss: number;
+    total_profit_loss_percentage: number;
+    total_holdings: number;
+    stocks_count: number;
+    etfs_count: number;
+    bonds_count: number;
+    mutual_funds_count: number;
+}
+
+export interface AccountHoldingsResponse {
+    account_id: string;
+    account_platform: string;
+    currency: string;
+    summary: AccountHoldingsSummary;
+    holdings: {
+        stocks: StockHoldingDetail[];
+        etfs: ETFHoldingDetail[];
+        bonds: BondHoldingDetail[];
+        mutual_funds: MutualFundHoldingDetail[];
+    };
 }

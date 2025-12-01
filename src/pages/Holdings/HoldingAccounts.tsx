@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -28,6 +29,7 @@ import {
   Delete,
   AccountBalance,
   Refresh,
+  Upload,
 } from '@mui/icons-material';
 import { holdingAccountsAPI } from '../../api/client';
 import { 
@@ -38,6 +40,7 @@ import {
 } from '../../types';
 
 const HoldingAccounts: React.FC = () => {
+  const navigate = useNavigate();
   const [accounts, setAccounts] = useState<HoldingAccount[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
@@ -169,6 +172,10 @@ const HoldingAccounts: React.FC = () => {
     }
   };
 
+  const handleUploadHoldings = (accountId: string): void => {
+    navigate(`/upload-holdings/${accountId}`);
+  };
+
   const getPlatformColor = (platform: AccountPlatform): 'primary' | 'secondary' | 'success' | 'info' => {
     switch (platform) {
       case AccountPlatform.ZERODHA:
@@ -199,9 +206,20 @@ const HoldingAccounts: React.FC = () => {
       flex: 1.2,
       minWidth: 150,
       renderCell: (params: GridRenderCellParams) => (
-        <Typography variant="body2" fontWeight={600}>
-          {params.value}
-        </Typography>
+        <Box
+          onClick={() => navigate(`/list-holdings/${params.value}`)}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+              color: 'primary.main',
+            },
+          }}
+        >
+          <Typography variant="body2" fontWeight={600} color="primary">
+            {params.value}
+          </Typography>
+        </Box>
       ),
     },
     {
@@ -262,11 +280,22 @@ const HoldingAccounts: React.FC = () => {
       field: 'actions',
       type: 'actions',
       headerName: 'Actions',
-      flex: 0.8,
-      minWidth: 120,
+      flex: 1,
+      minWidth: 160,
       getActions: (params) => {
         const account = params.row as HoldingAccount;
-        return [
+        const actions = [
+          <GridActionsCellItem
+            icon={
+              <Tooltip title="Upload Holdings">
+                <Upload fontSize="small" />
+              </Tooltip>
+            }
+            label="Upload Holdings"
+            onClick={() => handleUploadHoldings(account.account_id)}
+            showInMenu={false}
+            disabled={!account.is_active}
+          />,
           <GridActionsCellItem
             icon={
               <Tooltip title="Edit">
@@ -277,7 +306,10 @@ const HoldingAccounts: React.FC = () => {
             onClick={() => handleOpenDialog(account)}
             showInMenu={false}
           />,
-          account.is_active ? (
+        ];
+
+        if (account.is_active) {
+          actions.push(
             <GridActionsCellItem
               icon={
                 <Tooltip title="Deactivate">
@@ -288,7 +320,9 @@ const HoldingAccounts: React.FC = () => {
               onClick={() => handleDeactivate(account.account_id)}
               showInMenu={false}
             />
-          ) : (
+          );
+        } else {
+          actions.push(
             <GridActionsCellItem
               icon={
                 <Tooltip title="Reactivate">
@@ -299,8 +333,10 @@ const HoldingAccounts: React.FC = () => {
               onClick={() => handleReactivate(account.account_id)}
               showInMenu={false}
             />
-          ),
-        ];
+          );
+        }
+
+        return actions;
       },
     },
   ];

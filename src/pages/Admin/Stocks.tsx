@@ -173,6 +173,33 @@ const Stocks: React.FC = () => {
     }
   };
 
+  
+  // Helper function to calculate days difference
+  const getDaysAgo = (date: string | null): string => {
+    if (!date) return '';
+    
+    const priceDate = new Date(date);
+    const now = new Date();
+    
+    // Reset time to midnight for accurate day comparison
+    priceDate.setHours(0, 0, 0, 0);
+    now.setHours(0, 0, 0, 0);
+    
+    const diffTime = now.getTime() - priceDate.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) {
+      return 'Today';
+    } else if (diffDays === 1) {
+      return '1 day ago';
+    } else if (diffDays < 0) {
+      return 'Future date';
+    } else {
+      return `${diffDays} days ago`;
+    }
+  };
+
+
   // Updated columns definition
   const columns: GridColDef[] = [
     { field: 'symbol', headerName: 'Symbol', width: 120 },
@@ -193,13 +220,10 @@ const Stocks: React.FC = () => {
       ),
     },
     {
-      field: 'created_at',
-      headerName: 'Created',
-      width: 150,
-      valueFormatter: (params: any) => {
-        if (!params.value) return '';
-        return new Date(params.value).toLocaleDateString();
-      },
+      field: 'price_last_updated',
+      headerName: 'Last Price Update',
+      width: 180,
+      renderCell: (params) => getDaysAgo(params.value)
     },
     {
       field: 'actions',

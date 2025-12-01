@@ -22,6 +22,8 @@ import ListStocks from './pages/ListStocks';
 import HoldingAccounts from './pages/Holdings/HoldingAccounts';
 import Scheduler from './pages/Admin/Schedular';
 import ListEtfs from './pages/ListEtfs';
+import UploadHoldings from './pages/Holdings/UploadHoldings';
+import ListHoldings from './pages/Holdings/ListHoldings';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
@@ -145,11 +147,31 @@ const App: React.FC = () => {
                 }
               />
               <Route
-                path="/holding/accounts"
+                path="/holding-accounts"
                 element={
                   <ViewerRoute>
                     <Layout>
                       <HoldingAccounts />
+                    </Layout>
+                  </ViewerRoute>
+                }
+              />
+              <Route
+                path="/upload-holdings/:accountId"
+                element={
+                  <ViewerRoute>
+                    <Layout>
+                      <UploadHoldings />
+                    </Layout>
+                  </ViewerRoute>
+                }
+              />
+              <Route
+                path="/list-holdings/:accountId"
+                element={
+                  <ViewerRoute>
+                    <Layout>
+                      <ListHoldings />
                     </Layout>
                   </ViewerRoute>
                 }

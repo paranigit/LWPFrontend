@@ -32,6 +32,8 @@ import {
     HoldingAccount,
     HoldingAccountCreate,
     HoldingAccountUpdate,
+    HoldingUploadResponse,
+    AccountHoldingsResponse,
 } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -303,6 +305,9 @@ export const holdingAccountsAPI = {
     getById: (accountId: string): Promise<AxiosResponse<HoldingAccount>> =>
         api.get<HoldingAccount>(`/api/holding-accounts/${accountId}`),
 
+    getHoldings: (accountId: string): Promise<AxiosResponse<AccountHoldingsResponse>> =>
+        api.get<AccountHoldingsResponse>(`/api/holding-accounts/${accountId}/holdings`),
+
     create: (data: HoldingAccountCreate): Promise<AxiosResponse<HoldingAccount>> =>
         api.post<HoldingAccount>('/api/holding-accounts', data),
 
@@ -314,6 +319,21 @@ export const holdingAccountsAPI = {
 
     reactivate: (accountId: string): Promise<AxiosResponse<HoldingAccount>> =>
         api.post<HoldingAccount>(`/api/holding-accounts/${accountId}/reactivate`),
+
+    uploadHoldings: (accountId: string, file: File): Promise<AxiosResponse<HoldingUploadResponse>> => {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        return api.post<HoldingUploadResponse>(
+            `/api/holding-accounts/${accountId}/upload-holdings`,
+            formData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }
+        );
+    },
 };
 
 export default api;

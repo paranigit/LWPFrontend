@@ -149,7 +149,7 @@ const Etfs: React.FC = () => {
   const columns: GridColDef[] = [
     { field: 'symbol', headerName: 'Symbol', width: 120 },
     { field: 'name', headerName: 'Name', flex: 1 },
-    { field: 'sector_industry', headerName: 'Industry', width: 350 },
+    { field: 'sector_industry', headerName: 'Industry', width: 250 },
     { field: 'currency', headerName: 'Currency', width: 100 },
     { field: 'exchange', headerName: 'Exchange', width: 120 },
     {
