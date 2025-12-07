@@ -7,7 +7,6 @@ import Layout from './components/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 // import Holdings from './pages/Holdings';
-import Recommendations from './pages/Recommendations';
 // import { AssetType } from './types';
 import AllowedEmails from './pages/Admin/AllowedEmails';
 import Stocks from './pages/Admin/Stocks';
@@ -24,6 +23,7 @@ import Scheduler from './pages/Admin/Schedular';
 import ListEtfs from './pages/ListEtfs';
 import UploadHoldings from './pages/Holdings/UploadHoldings';
 import ListHoldings from './pages/Holdings/ListHoldings';
+import HoldingRecommendations from './pages/Holdings/HoldingRecommendations';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
@@ -107,16 +107,6 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<Login />} />
               <Route
-                path="/recommendations"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Recommendations />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
                 path="/list-stocks"
                 element={
                   <ProtectedRoute>
@@ -172,6 +162,16 @@ const App: React.FC = () => {
                   <ViewerRoute>
                     <Layout>
                       <ListHoldings />
+                    </Layout>
+                  </ViewerRoute>
+                }
+              />
+              <Route
+                path="/holding-recommendations"
+                element={
+                  <ViewerRoute>
+                    <Layout>
+                      <HoldingRecommendations />
                     </Layout>
                   </ViewerRoute>
                 }

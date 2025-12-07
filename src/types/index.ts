@@ -460,7 +460,7 @@ export interface AccountHoldingsSummary {
     mutual_funds_count: number;
 }
 
-export interface AccountHoldingsResponse {
+export interface HoldingAccountsResponse {
     account_id: string;
     account_platform: string;
     currency: string;
@@ -471,4 +471,40 @@ export interface AccountHoldingsResponse {
         bonds: BondHoldingDetail[];
         mutual_funds: MutualFundHoldingDetail[];
     };
+}
+
+// Holding Recommendation types
+export interface HoldingRecommendation {
+    id: number;
+    holding_account_id: string;
+    stock_symbol: string;
+    recommendation_type: string; // 'BUY', 'SELL', 'HOLD'
+
+    // Price information
+    current_average_price: number;
+    price_52w_low: number;
+    target_price: number;
+
+    // Quantity information
+    current_quantity: number;
+    recommended_quantity: number;
+
+    // Technical indicators
+    pe_ratio?: number;
+    pegy_index?: number;
+    rsi_index?: number;
+
+    // Metadata
+    recommendation_date: string;
+    is_active: boolean;
+    notes?: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface HoldingRecommendationsResponse {
+    account_id: string;
+    recommendations_count: number;
+    active_count: number;
+    recommendations: HoldingRecommendation[];
 }

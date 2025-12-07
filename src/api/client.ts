@@ -33,7 +33,8 @@ import {
     HoldingAccountCreate,
     HoldingAccountUpdate,
     HoldingUploadResponse,
-    AccountHoldingsResponse,
+    HoldingAccountsResponse,
+    HoldingRecommendationsResponse,
 } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -305,8 +306,8 @@ export const holdingAccountsAPI = {
     getById: (accountId: string): Promise<AxiosResponse<HoldingAccount>> =>
         api.get<HoldingAccount>(`/api/holding-accounts/${accountId}`),
 
-    getHoldings: (accountId: string): Promise<AxiosResponse<AccountHoldingsResponse>> =>
-        api.get<AccountHoldingsResponse>(`/api/holding-accounts/${accountId}/holdings`),
+    getHoldings: (accountId: string): Promise<AxiosResponse<HoldingAccountsResponse>> =>
+        api.get<HoldingAccountsResponse>(`/api/holding-accounts/${accountId}/holdings`),
 
     create: (data: HoldingAccountCreate): Promise<AxiosResponse<HoldingAccount>> =>
         api.post<HoldingAccount>('/api/holding-accounts', data),
@@ -322,6 +323,11 @@ export const holdingAccountsAPI = {
 
     deleteHolding: (accountId: string, holdingId: number): Promise<AxiosResponse<{ message: string; holding_id: number; account_id: string }>> =>
         api.delete(`/api/holding-accounts/${accountId}/holdings/${holdingId}`),
+
+    getHoldingRecommendations: (accountId: string, includeInactive?: boolean): Promise<AxiosResponse<HoldingRecommendationsResponse>> =>
+        api.get<HoldingRecommendationsResponse>(`/api/holding-accounts/${accountId}/holding-recommendations`, {
+            params: { include_inactive: includeInactive }
+        }),
 
     uploadHoldings: (accountId: string, file: File): Promise<AxiosResponse<HoldingUploadResponse>> => {
         const formData = new FormData();

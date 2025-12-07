@@ -34,9 +34,10 @@ import {
   Assessment,
   Delete,
 } from '@mui/icons-material';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { holdingAccountsAPI } from '../../api/client';
 import {
-  AccountHoldingsResponse,
+  HoldingAccountsResponse,
   StockHoldingDetail,
   ETFHoldingDetail,
   BondHoldingDetail,
@@ -50,7 +51,7 @@ const ListHoldings: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
-  const [holdings, setHoldings] = useState<AccountHoldingsResponse | null>(null);
+  const [holdings, setHoldings] = useState<HoldingAccountsResponse | null>(null);
   
   // Filter state for asset types
   const [selectedAssetTypes, setSelectedAssetTypes] = useState<string[]>([
@@ -199,6 +200,272 @@ const ListHoldings: React.FC = () => {
     if (value < 0) return 'error';
     return 'default';
   };
+
+  const formatDaysAgo = (dateString: string): string => {
+    const updatedDate = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - updatedDate.getTime());
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) {
+      return 'Today';
+    } else if (diffDays === 1) {
+      return '1 day ago';
+    } else {
+      return `${diffDays} days ago`;
+    }
+  };
+
+  const getDaysAgoColor = (dateString: string): string => {
+    const updatedDate = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - updatedDate.getTime());
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    return diffDays > 2 ? 'error.main' : 'text.secondary';
+  };
+
+  // Stocks DataGrid Columns
+  const stockColumns: GridColDef[] = [
+    {
+      field: 'symbol',
+      headerName: 'Symbol',
+      width: 150,
+      renderCell: (params: GridRenderCellParams) => (
+        <Box>
+          <Typography variant="body2" fontWeight={600}>
+            {params.row.symbol} 
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{ color: getDaysAgoColor(params.row.updated_at) }}
+          >
+            {formatDaysAgo(params.row.updated_at)}
+          </Typography>
+        </Box>
+      ),
+    },
+    {
+      field: 'quantity',
+      headerName: 'Quantity',
+      width: 130,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams) => (
+        <Box sx={{ textAlign: 'right' }}>
+          <Typography variant="body2">{params.row.quantity}</Typography>
+
+        </Box>
+      ),
+    },
+    {
+      field: 'average_price',
+      headerName: 'Avg Price',
+      width: 130,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams) =>
+        formatCurrency(params.row.average_price, params.row.currency),
+    },
+    {
+      field: 'last_close_price',
+      headerName: 'Last Close',
+      width: 130,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams) =>
+        params.row.last_close_price
+          ? formatCurrency(params.row.last_close_price, params.row.currency)
+          : '-',
+    },
+    {
+      field: 'invested_value',
+      headerName: 'Invested',
+      width: 140,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams) =>
+        formatCurrency(params.row.invested_value, params.row.currency),
+    },
+    {
+      field: 'current_value',
+      headerName: 'Current Value',
+      width: 140,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams) =>
+        formatCurrency(params.row.current_value, params.row.currency),
+    },
+    {
+      field: 'profit_loss',
+      headerName: 'P&L',
+      width: 130,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography
+          variant="body2"
+          color={params.row.profit_loss >= 0 ? 'success.main' : 'error.main'}
+          fontWeight={600}
+        >
+          {formatCurrency(params.row.profit_loss, params.row.currency)}
+        </Typography>
+      ),
+    },
+    {
+      field: 'profit_loss_percentage',
+      headerName: 'P&L %',
+      width: 120,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams) => (
+        <Chip
+          label={formatPercentage(params.row.profit_loss_percentage)}
+          color={getProfitLossColor(params.row.profit_loss)}
+          size="small"
+        />
+      ),
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 100,
+      align: 'center',
+      headerAlign: 'center',
+      sortable: false,
+      renderCell: (params: GridRenderCellParams) => (
+        <IconButton
+          size="small"
+          color="error"
+          onClick={() => handleDeleteHolding(params.row.id, params.row.symbol)}
+          title="Delete holding"
+        >
+          <Delete fontSize="small" />
+        </IconButton>
+      ),
+    },
+  ];
+
+  // ETFs DataGrid Columns (similar to stocks)
+  const etfColumns: GridColDef[] = [
+    {
+      field: 'symbol',
+      headerName: 'Symbol',
+      width: 150,
+      renderCell: (params: GridRenderCellParams) => (
+        <Box>
+          <Typography variant="body2" fontWeight={600}>
+            {params.row.symbol}
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{ color: getDaysAgoColor(params.row.updated_at) }}
+          >
+            {formatDaysAgo(params.row.updated_at)}
+          </Typography>
+        </Box>
+      ),
+    },
+    {
+      field: 'quantity',
+      headerName: 'Quantity',
+      width: 130,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams) => (
+        <Box sx={{ textAlign: 'right' }}>
+          <Typography variant="body2">{params.row.quantity}</Typography>
+          
+        </Box>
+      ),
+    },
+    {
+      field: 'average_price',
+      headerName: 'Avg Price',
+      width: 130,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams) =>
+        formatCurrency(params.row.average_price, params.row.currency),
+    },
+    {
+      field: 'last_close_price',
+      headerName: 'Last Close',
+      width: 130,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams) =>
+        params.row.last_close_price
+          ? formatCurrency(params.row.last_close_price, params.row.currency)
+          : '-',
+    },
+    {
+      field: 'invested_value',
+      headerName: 'Invested',
+      width: 140,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams) =>
+        formatCurrency(params.row.invested_value, params.row.currency),
+    },
+    {
+      field: 'current_value',
+      headerName: 'Current Value',
+      width: 140,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams) =>
+        formatCurrency(params.row.current_value, params.row.currency),
+    },
+    {
+      field: 'profit_loss',
+      headerName: 'P&L',
+      width: 130,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams) => (
+        <Typography
+          variant="body2"
+          color={params.row.profit_loss >= 0 ? 'success.main' : 'error.main'}
+          fontWeight={600}
+        >
+          {formatCurrency(params.row.profit_loss, params.row.currency)}
+        </Typography>
+      ),
+    },
+    {
+      field: 'profit_loss_percentage',
+      headerName: 'P&L %',
+      width: 120,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params: GridRenderCellParams) => (
+        <Chip
+          label={formatPercentage(params.row.profit_loss_percentage)}
+          color={getProfitLossColor(params.row.profit_loss)}
+          size="small"
+        />
+      ),
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 100,
+      align: 'center',
+      headerAlign: 'center',
+      sortable: false,
+      renderCell: (params: GridRenderCellParams) => (
+        <IconButton
+          size="small"
+          color="error"
+          onClick={() => handleDeleteHolding(params.row.id, params.row.symbol)}
+          title="Delete holding"
+        >
+          <Delete fontSize="small" />
+        </IconButton>
+      ),
+    },
+  ];
 
   if (loading) {
     return (
@@ -380,7 +647,7 @@ const ListHoldings: React.FC = () => {
         </Grid>
       </Grid>
 
-      {/* Stocks Section */}
+      {/* Stocks DataGrid */}
       {selectedAssetTypes.includes('stocks') && holdings.holdings.stocks.length > 0 && (
         <Paper sx={{ mb: 3 }}>
           <Box sx={{ p: 2, backgroundColor: 'primary.main', color: 'white' }}>
@@ -388,90 +655,24 @@ const ListHoldings: React.FC = () => {
               Stocks ({holdings.holdings.stocks.length})
             </Typography>
           </Box>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Symbol</TableCell>
-                  <TableCell align="right">Quantity</TableCell>
-                  <TableCell align="right">Avg Price</TableCell>
-                  <TableCell align="right">Last Close</TableCell>
-                  <TableCell align="right">Invested</TableCell>
-                  <TableCell align="right">Current Value</TableCell>
-                  <TableCell align="right">P&L</TableCell>
-                  <TableCell align="right">P&L %</TableCell>
-                  <TableCell align="right">Updated</TableCell>
-                  <TableCell align="center">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {holdings.holdings.stocks.map((stock: StockHoldingDetail) => (
-                  <TableRow key={stock.id} hover>
-                    <TableCell>
-                      <Typography variant="body2" fontWeight={600}>
-                        {stock.symbol}
-                      </Typography>
-                      {stock.exchange && (
-                        <Typography variant="caption" color="text.secondary">
-                          {stock.exchange}
-                        </Typography>
-                      )}
-                    </TableCell>
-                    <TableCell align="right">{stock.quantity}</TableCell>
-                    <TableCell align="right">
-                      {formatCurrency(stock.average_price, stock.currency)}
-                    </TableCell>
-                    <TableCell align="right">
-                      {stock.last_close_price
-                        ? formatCurrency(stock.last_close_price, stock.currency)
-                        : '-'}
-                    </TableCell>
-                    <TableCell align="right">
-                      {formatCurrency(stock.invested_value, stock.currency)}
-                    </TableCell>
-                    <TableCell align="right">
-                      {formatCurrency(stock.current_value, stock.currency)}
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography
-                        variant="body2"
-                        color={stock.profit_loss >= 0 ? 'success.main' : 'error.main'}
-                        fontWeight={600}
-                      >
-                        {formatCurrency(stock.profit_loss, stock.currency)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Chip
-                        label={formatPercentage(stock.profit_loss_percentage)}
-                        color={getProfitLossColor(stock.profit_loss)}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="caption" color="text.secondary">
-                        {new Date(stock.updated_at).toLocaleDateString()}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => handleDeleteHolding(stock.id, stock.symbol)}
-                        title="Delete holding"
-                      >
-                        <Delete fontSize="small" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Box sx={{ height: 800, width: '100%' }}>
+            <DataGrid
+              rows={holdings.holdings.stocks}
+              columns={stockColumns}
+              initialState={{
+                pagination: {
+                  paginationModel: { pageSize: 25 },
+                },
+              }}
+              pageSizeOptions={[25, 50, 100]}
+              disableRowSelectionOnClick
+              rowHeight={70}
+            />
+          </Box>
         </Paper>
       )}
 
-      {/* ETFs Section */}
+      {/* ETFs DataGrid */}
       {selectedAssetTypes.includes('etfs') && holdings.holdings.etfs.length > 0 && (
         <Paper sx={{ mb: 3 }}>
           <Box sx={{ p: 2, backgroundColor: 'success.main', color: 'white' }}>
@@ -479,84 +680,20 @@ const ListHoldings: React.FC = () => {
               ETFs ({holdings.holdings.etfs.length})
             </Typography>
           </Box>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Symbol</TableCell>
-                  <TableCell align="right">Quantity</TableCell>
-                  <TableCell align="right">Avg Price</TableCell>
-                  <TableCell align="right">Last Close</TableCell>
-                  <TableCell align="right">Invested</TableCell>
-                  <TableCell align="right">Current Value</TableCell>
-                  <TableCell align="right">P&L</TableCell>
-                  <TableCell align="right">P&L %</TableCell>
-                  <TableCell align="right">Updated</TableCell>
-                  <TableCell align="center">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {holdings.holdings.etfs.map((etf: ETFHoldingDetail) => (
-                  <TableRow key={etf.id} hover>
-                    <TableCell>
-                      <Typography variant="body2" fontWeight={600}>
-                        {etf.symbol}
-                      </Typography>
-                      {etf.exchange && (
-                        <Typography variant="caption" color="text.secondary">
-                          {etf.exchange}
-                        </Typography>
-                      )}
-                    </TableCell>
-                    <TableCell align="right">{etf.quantity}</TableCell>
-                    <TableCell align="right">
-                      {formatCurrency(etf.average_price, etf.currency)}
-                    </TableCell>
-                    <TableCell align="right">
-                      {etf.last_close_price ? formatCurrency(etf.last_close_price, etf.currency) : '-'}
-                    </TableCell>
-                    <TableCell align="right">
-                      {formatCurrency(etf.invested_value, etf.currency)}
-                    </TableCell>
-                    <TableCell align="right">
-                      {formatCurrency(etf.current_value, etf.currency)}
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography
-                        variant="body2"
-                        color={etf.profit_loss >= 0 ? 'success.main' : 'error.main'}
-                        fontWeight={600}
-                      >
-                        {formatCurrency(etf.profit_loss, etf.currency)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Chip
-                        label={formatPercentage(etf.profit_loss_percentage)}
-                        color={getProfitLossColor(etf.profit_loss)}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="caption" color="text.secondary">
-                        {new Date(etf.updated_at).toLocaleDateString()}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => handleDeleteHolding(etf.id, etf.symbol)}
-                        title="Delete holding"
-                      >
-                        <Delete fontSize="small" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Box sx={{ height: 600, width: '100%' }}>
+            <DataGrid
+              rows={holdings.holdings.etfs}
+              columns={etfColumns}
+              initialState={{
+                pagination: {
+                  paginationModel: { pageSize: 25 },
+                },
+              }}
+              pageSizeOptions={[25, 50, 100]}
+              disableRowSelectionOnClick
+              rowHeight={70}
+            />
+          </Box>
         </Paper>
       )}
 
@@ -579,7 +716,6 @@ const ListHoldings: React.FC = () => {
                   <TableCell align="right">Avg Price</TableCell>
                   <TableCell align="right">Invested</TableCell>
                   <TableCell align="right">Current Value</TableCell>
-                  <TableCell align="right">Updated</TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -599,7 +735,16 @@ const ListHoldings: React.FC = () => {
                         {mf.isin}
                       </Typography>
                     </TableCell>
-                    <TableCell align="right">{mf.quantity}</TableCell>
+                    <TableCell align="right">
+                      <Typography variant="body2">{mf.quantity}</Typography>
+                      <Typography 
+                        variant="caption" 
+                        color={getDaysAgoColor(mf.updated_at)}
+                        display="block"
+                      >
+                        {formatDaysAgo(mf.updated_at)}
+                      </Typography>
+                    </TableCell>
                     <TableCell align="right">
                       {formatCurrency(mf.average_price, mf.currency)}
                     </TableCell>
@@ -653,7 +798,6 @@ const ListHoldings: React.FC = () => {
                   <TableCell align="right">Maturity</TableCell>
                   <TableCell align="right">Invested</TableCell>
                   <TableCell align="right">Current Value</TableCell>
-                  <TableCell align="right">Updated</TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -670,7 +814,16 @@ const ListHoldings: React.FC = () => {
                         {bond.isin}
                       </Typography>
                     </TableCell>
-                    <TableCell align="right">{bond.quantity}</TableCell>
+                    <TableCell align="right">
+                      <Typography variant="body2">{bond.quantity}</Typography>
+                      <Typography 
+                        variant="caption" 
+                        color={getDaysAgoColor(bond.updated_at)}
+                        display="block"
+                      >
+                        {formatDaysAgo(bond.updated_at)}
+                      </Typography>
+                    </TableCell>
                     <TableCell align="right">
                       {formatCurrency(bond.average_price, bond.currency)}
                     </TableCell>
