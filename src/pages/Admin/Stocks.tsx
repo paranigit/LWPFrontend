@@ -30,6 +30,7 @@ const Stocks: React.FC = () => {
   const [industries, setIndustries] = useState<Industry[]>([]);
   const [industryNames, setIndustryNames] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [selectedStock, setSelectedStock] = useState<StockSymbol | null>(null);
@@ -145,6 +146,7 @@ const Stocks: React.FC = () => {
   };
 
   const handleSubmit = async (): Promise<void> => {
+    setSubmitting(true);
     try {
       if (editMode && selectedStock) {
         await stockAPI.update(selectedStock.symbol, formData);
@@ -156,6 +158,8 @@ const Stocks: React.FC = () => {
     } catch (error: any) {
       console.error('Failed to save:', error);
       alert(error.response?.data?.detail || 'Failed to save');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -379,9 +383,15 @@ const Stocks: React.FC = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained">
-            {editMode ? 'Update' : 'Add'}
+          <Button onClick={handleCloseDialog} disabled={submitting}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleSubmit} 
+            variant="contained"
+            disabled={submitting}
+          >
+            {submitting ? 'Saving...' : editMode ? 'Update' : 'Add'}
           </Button>
         </DialogActions>
       </Dialog>
