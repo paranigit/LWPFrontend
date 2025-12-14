@@ -156,7 +156,7 @@ const StockHistory: React.FC = () => {
       {/* Summary Cards */}
       {summary && (
         <Grid container spacing={2} mb={3}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{xs: 12, sm: 6, md: 3}}>
             <Card>
               <CardContent>
                 <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -168,7 +168,7 @@ const StockHistory: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{xs: 12, sm: 6, md: 3}}>
             <Card>
               <CardContent>
                 <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -180,7 +180,7 @@ const StockHistory: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{xs: 12, sm: 6, md: 3}}>
             <Card>
               <CardContent>
                 <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -192,7 +192,7 @@ const StockHistory: React.FC = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{xs: 12, sm: 6, md: 3}}>
             <Card>
               <CardContent>
                 <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -357,7 +357,7 @@ const StockHistory: React.FC = () => {
             Moving Average Analysis
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid size={{xs: 12, sm: 6, md: 3}}>
               <Typography variant="body2" color="text.secondary">
                 MA 20
               </Typography>
@@ -365,7 +365,7 @@ const StockHistory: React.FC = () => {
                 {currencySymbol}{formatPrice(summary.ma_20)}
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid size={{xs: 12, sm: 6, md: 3}}>
               <Typography variant="body2" color="text.secondary">
                 MA 200
               </Typography>
@@ -374,7 +374,7 @@ const StockHistory: React.FC = () => {
               </Typography>
             </Grid>
             {summary.pe_ratio != null && (
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid size={{xs: 12, sm: 6, md: 3}}>
                 <Typography variant="body2" color="text.secondary">
                   P/E Ratio
                 </Typography>
@@ -384,7 +384,7 @@ const StockHistory: React.FC = () => {
               </Grid>
             )}
             {summary.dividend_yield != null && (
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid size={{xs: 12, sm: 6, md: 3}}>
                 <Typography variant="body2" color="text.secondary">
                   Dividend Yield
                 </Typography>
