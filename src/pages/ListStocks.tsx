@@ -188,8 +188,9 @@ const ListStocks: React.FC = () => {
       renderCell: (params: GridRenderCellParams) => {
         const recommendation = params.row.recommendation;
         const showChip = recommendation === 'BUY' || recommendation === 'SELL';
-        
+
         return (
+          <>
           <Box display="flex" alignItems="center" gap={0.5}>
             <Tooltip title={params.row.name || 'No name available'} arrow>
               <Link
@@ -200,7 +201,7 @@ const ListStocks: React.FC = () => {
                 underline="hover"
                 sx={{
                   fontWeight: 600,
-                  color: 'primary.main',
+                  color: 'secondary.main',
                   cursor: 'pointer',
                   '&:hover': {
                     color: 'primary.dark',
@@ -229,6 +230,8 @@ const ListStocks: React.FC = () => {
               />
             )}
           </Box>
+          
+          </>
         );
       },
     },
@@ -241,7 +244,8 @@ const ListStocks: React.FC = () => {
       renderCell: (params: GridRenderCellParams) => {
         const currencySymbol = getCurrencySymbol(params.row.currency);
         const { price_last_close, price_52w_low, price_52w_high } = params.row;
-        
+        const daysAgo = getDaysAgo(params.row.price_last_updated);
+
         // Calculate position and color
         let priceColor = 'text.primary';
         if (price_last_close != null && price_52w_low != null && price_52w_high != null) {
@@ -252,20 +256,31 @@ const ListStocks: React.FC = () => {
         }
         
         return (
-          <Box display="flex" alignItems="center" justifyContent="flex-end">
-            {params.value != null ? (
-              <>
-                <Typography variant="body2" color="text.secondary" sx={{ mr: 0.3 }}>
-                  {currencySymbol}
-                </Typography>
-                <Typography variant="body2" fontWeight={700} color={priceColor}>
-                  {params.value.toFixed(2)}
-                </Typography>
-              </>
-            ) : (
-              <Typography variant="body2">-</Typography>
-            )}
+          <Box>
+            <Box display="flex" alignItems="center" justifyContent="flex-end">
+              {params.value != null ? (
+                <>
+                  <Typography variant="body2" color="text.secondary" sx={{ mr: 0.3 }}>
+                    {currencySymbol}
+                  </Typography>
+                  <Typography variant="body2" fontWeight={700} color={priceColor}>
+                    {params.value.toFixed(2)}
+                  </Typography>
+                </>
+              ) : (
+                <Typography variant="body2">-</Typography>
+              )}
+            </Box>
+            <Typography 
+              variant="body2" 
+              sx={{ fontSize: '0.75rem' }}
+              color={'lightgrey'}
+            >
+              {daysAgo || 'No data'} 
+            </Typography>
           </Box>
+
+
         );
       },
     },
@@ -561,27 +576,27 @@ const ListStocks: React.FC = () => {
         );
       },
     },
-    {
-      field: 'price_last_updated',
-      headerName: 'History Updated',
-      width: 160,
-      align: 'center',
-      headerAlign: 'center',
-      renderCell: (params: GridRenderCellParams) => {
-        const daysAgo = getDaysAgo(params.value);
-        const isStale = params.value && new Date(params.value) < new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    // {
+    //   field: 'price_last_updated',
+    //   headerName: 'History Updated',
+    //   width: 160,
+    //   align: 'center',
+    //   headerAlign: 'center',
+    //   renderCell: (params: GridRenderCellParams) => {
+    //     const daysAgo = getDaysAgo(params.value);
+    //     const isStale = params.value && new Date(params.value) < new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
         
-        return (
-          <Typography 
-            variant="body2" 
-            color={isStale ? 'error' : 'text.primary'}
-            fontWeight={isStale ? 600 : 400}
-          >
-            {daysAgo || 'No data'}
-          </Typography>
-        );
-      },
-    },
+    //     return (
+    //       <Typography 
+    //         variant="body2" 
+    //         color={isStale ? 'error' : 'text.primary'}
+    //         fontWeight={isStale ? 600 : 400}
+    //       >
+    //         {daysAgo || 'No data'}
+    //       </Typography>
+    //     );
+    //   },
+    // },
     {
       field: 'sector_industry',
       headerName: 'Industry',
