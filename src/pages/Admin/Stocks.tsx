@@ -148,10 +148,18 @@ const Stocks: React.FC = () => {
   const handleSubmit = async (): Promise<void> => {
     setSubmitting(true);
     try {
+      // Trim all string values to remove leading/trailing spaces
+      const trimmedData = {
+        ...formData,
+        symbol: formData.symbol?.trim().toUpperCase() || '',
+        name: formData.name?.trim() || '',
+        exchange: formData.exchange?.trim() || '',
+      };
+
       if (editMode && selectedStock) {
-        await stockAPI.update(selectedStock.symbol, formData);
+        await stockAPI.update(selectedStock.symbol, trimmedData);
       } else {
-        await stockAPI.create(formData);
+        await stockAPI.create(trimmedData);
       }
       handleCloseDialog();
       loadData();

@@ -94,10 +94,18 @@ const Etfs: React.FC = () => {
 
   const handleSubmit = async (): Promise<void> => {
     try {
+      // Trim all string values to remove leading/trailing spaces
+      const trimmedData = {
+        ...formData,
+        symbol: formData.symbol?.trim().toUpperCase() || '',
+        name: formData.name?.trim() || '',
+        exchange: formData.exchange?.trim() || '',
+      };
+
       if (editMode && selectedEtf) {
-        await etfAPI.update(selectedEtf.symbol, formData);
+        await etfAPI.update(selectedEtf.symbol, trimmedData);
       } else {
-        await etfAPI.create(formData);
+        await etfAPI.create(trimmedData);
       }
       handleCloseDialog();
       loadData();

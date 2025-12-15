@@ -73,10 +73,16 @@ const Industries: React.FC = () => {
 
   const handleSubmit = async (): Promise<void> => {
     try {
+      // Trim all string values to remove leading/trailing spaces
+      const trimmedData = {
+        sector: formData.sector?.trim() || '',
+        industry: formData.industry?.trim() || '',
+      };
+
       if (editMode && selectedIndustry) {
-        await industriesAPI.update(selectedIndustry.id, formData);
+        await industriesAPI.update(selectedIndustry.id, trimmedData);
       } else {
-        await industriesAPI.create(formData);
+        await industriesAPI.create(trimmedData);
       }
       handleCloseDialog();
       loadData();
